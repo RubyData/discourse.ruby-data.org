@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+
+discourse_docker_dir = File.expand_path('../../discourse_docker', __FILE__)
+
+config_data = IO.read(ARGV[0])
+config = YAML.load(config_data)
+
+print "hack: true"
+
+config['templates'].each do |template|
+  next if template.nil? || template.empty?
+  print " _FILE_SEPERATOR_ "
+  print IO.read(File.join(discourse_docker_dir, template))
+end
+
+print " _FILE_SEPARATOR_ "
+print config_data

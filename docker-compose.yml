@@ -1,0 +1,43 @@
+---
+version: '2.3'
+services:
+  discourse:
+    build:
+      context: .
+      dockerfile: image/discourse/Dockerfile
+      network: discourserubydataorg_default
+    image: rubydata/discourse
+    environment:
+      DISCOURSE_DB_SOCKET: ''
+      DISCOURSE_DB_HOST: postgres
+      DISCOURSE_DB_PORT: 5432
+      DISCOURSE_DB_USERNAME: discourse
+      DISCOURSE_DB_PASSWORD: ''
+      DISCOURSE_REDIS_HOST: redis
+    ports:
+      - "80:80"
+      - "2222:22"
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    # build: image/postgres
+    image: postgres:9.5
+    restart: always
+    environment:
+      # Superuser name
+      POSTGRES_USER: postgres
+      # Default created db name
+      POSTGRES_DB: discourse
+      # Rails DB user
+      RAILS_DB_USER: discourse
+      # Rails DB user
+      RAILS_DB_USER: discourse
+    ports:
+      - "5432"
+    volumes:
+      - ./image/postgres/init_discourse.sh:/docker-entrypoint-initdb.d/init_postgresql.sh
+
+  redis:
+    image: redis

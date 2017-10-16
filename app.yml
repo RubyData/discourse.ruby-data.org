@@ -1,0 +1,18 @@
+templates:
+  - "templates/web.template.yml"
+  - "templates/web.ratelimited.template.yml"
+
+env:
+  LANG: en_US.UTF-8
+
+  DISCOURSE_DB_SOCKET: ''
+  DISCOURSE_DB_HOST: postgres
+  DISCOURSE_DB_PORT: 5432
+  DISCOURSE_DB_USERNAME: discourse
+  DISCOURSE_DB_PASSWORD: ''
+  DISCOURSE_REDIS_HOST: redis
+
+  DISCOURSE_DEVELOPER_EMAILS: 'me@example.com'
+  DISCOURSE_HOSTNAME: 'discourse.ruby-data.org'
+
+  DISCOURSE_SMTP_ADDRESS: smtp.example.com         # (mandatory)
