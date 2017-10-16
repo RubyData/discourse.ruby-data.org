@@ -1,10 +1,10 @@
 desc 'Build rubydata/discourse image'
 task :build do
   begin
-    Rake::Task['build:postgres:up'].invoke
+    Rake::Task['build:backends:up'].invoke
     sh 'docker-compose', 'build'
   ensure
-    Rake::Task['build:postgres:down'].invoke
+    Rake::Task['build:backends:down'].invoke
   end
 end
 
@@ -14,7 +14,7 @@ task :push do
 end
 
 namespace :build do
-  namespace :postgres do
+  namespace :backends do
     task up: 'compose:up:detached:postgres'
     task up: 'compose:up:detached:redis'
     task down: 'compose:down'
@@ -22,10 +22,6 @@ namespace :build do
 end
 
 namespace :compose do
-  task :up do
-    sh 'docker-compose', 'up'
-  end
-
   namespace :up do
     namespace :detached do
       task :postgres do
@@ -35,7 +31,20 @@ namespace :compose do
       task :redis do
         sh 'docker-compose', 'up', '-d', 'redis'
       end
+
+      task backends: :postgres
+      task backends: :redis
     end
+
+    task detached: 'compose:up:detached:backends' do
+      sh 'docker-compose', 'run', 'discourse', 'su', 'discourse', '-c', 'cd /var/www/discourse && bundle exec rake db:migrate'
+      sh 'docker-compose', 'up', '-d', 'discourse'
+    end
+  end
+
+  task up: 'compose:up:detached:backends' do
+    sh 'docker-compose', 'run', 'discourse', 'su', 'discourse', '-c', 'cd /var/www/discourse && bundle exec rake db:migrate'
+    sh 'docker-compose', 'up'
   end
 
   task :down do

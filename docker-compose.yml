@@ -16,11 +16,12 @@ services:
       DISCOURSE_DB_PASSWORD: ''
       DISCOURSE_REDIS_HOST: redis
     ports:
-      - "80:80"
+      - "8880:80"
       - "2222:22"
     depends_on:
       - postgres
       - redis
+    hostname: discourse.ruby-data.org
 
   postgres:
     # build: image/postgres
