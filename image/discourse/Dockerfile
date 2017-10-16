@@ -15,6 +15,8 @@ ARG DISCOURSE_DB_PORT=5432
 ARG DISCOURSE_DB_USERNAME=discourse
 ARG DISCOURSE_DB_PASSWORD=''
 ARG DISCOURSE_REDIS_HOST=redis
+ARG DISCOURSE_DEVELOPER_EMAILS=muraken@gmail.com
+ARG DISCOURSE_HOSTNAME=discourse.ruby-data.org
 
 ADD . /tmp/discourse.ruby-data.org
 
@@ -30,5 +32,4 @@ RUN cd /tmp/discourse.ruby-data.org \
 	&& input="hack: true"; for template in $templates; do input="$input _FILE_SEPERATOR_ $(cat ${template})"; done \
 	&& cd /pups \
 	&& echo "$input" | /pups/bin/pups --stdin \
-	&& : rm -rf /tmp/discourse.ruby-data.org
-
+	&& rm -rf /tmp/discourse.ruby-data.org
