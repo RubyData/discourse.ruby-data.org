@@ -13,6 +13,7 @@ desc 'Push rubydata/discourse image'
 task :push do
   sh 'docker', 'push', 'rubydata/discourse'
   hash = `git rev-parse HEAD`.chomp
+  sh 'docker', 'image', 'tag', 'rubydata/discourse:latest', "rubydata/discourse:#{hash}"
   sh 'docker', 'push', "rubydata/discourse:#{hash}"
 end
 
