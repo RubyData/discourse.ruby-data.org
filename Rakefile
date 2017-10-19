@@ -20,16 +20,22 @@ end
 namespace :prepare do
   task environment: :check
   task :environment do
-    ENV['DISCOURSE_SMTP_USER_NAME'] = ENV['AWS_ACCESS_KEY_ID']
-    ENV['DISCOURSE_SMTP_PASSWORD']  = ses_smtp_password
+    if ENV['AWS_ACCESS_KEY_ID']
+      ENV['DISCOURSE_SMTP_USER_NAME'] = ENV['AWS_ACCESS_KEY_ID']
+      ENV['DISCOURSE_SMTP_PASSWORD']  = ses_smtp_password
+    elsif ENV['SENDGRID_API_KEY']
+      ENV['DISCOURSE_SMTP_ADDRESS'] = 'smtp.sendgrid.net'
+      ENV['DISCOURSE_SMTP_USER_NAME'] = 'apikey'
+      ENV['DISCOURSE_SMTP_PASSWORD']  = ENV['SENDGRID_API_KEY']
+    end
   end
 
   task :check do
-    unless ENV['AWS_ACCESS_KEY_ID']
-      raise 'AWS_ACCESS_KEY_ID is required'
+    unless ENV['AWS_ACCESS_KEY_ID'] || ENV['SENDGRID_API_KEY']
+      raise 'AWS_ACCESS_KEY_ID or SENDGRID_API_KEY is required'
     end
-    unless ENV['AWS_SECRET_ACCESS_KEY']
-      raise 'AWS_ACCESS_KEY_ID is required'
+    if ENV['AWS_ACCESS_KEY_ID'] && !ENV['AWS_SECRET_ACCESS_KEY']
+      raise 'AWS_SECRET_ACCESS_KEY is required'
     end
   end
 end
