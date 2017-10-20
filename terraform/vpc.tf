@@ -9,21 +9,41 @@ resource "aws_vpc" "vpc_main" {
   }
 }
 
+variable "public_subnet_cidr_blocks" {
+  type = "list"
+  default = [
+    "10.100.0.0/24",
+    "10.100.2.0/24"
+  ]
+}
+
+variable "private_subnet_cidr_blocks" {
+  type = "list"
+  default = [
+    "10.100.1.0/24",
+    "10.100.3.0/24"
+  ]
+}
+
 resource "aws_subnet" "subnet_main_public" {
+  count = 2
   vpc_id = "${aws_vpc.vpc_main.id}"
-  cidr_block = "10.100.0.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
+  cidr_block = "${var.public_subnet_cidr_blocks[count.index]}"
 
   tags {
-    Name = "subnet-main-public-discourse-${terraform.workspace}"
+    Name = "subnet-main-public-${count.index + 1}-discourse-${terraform.workspace}"
   }
 }
 
 resource "aws_subnet" "subnet_main_private" {
+  count = 2
   vpc_id = "${aws_vpc.vpc_main.id}"
-  cidr_block = "10.100.1.0/24"
+  availability_zone = "${data.aws_availability_zones.available.names[count.index]}"
+  cidr_block = "${var.private_subnet_cidr_blocks[count.index]}"
 
   tags {
-    Name = "subnet-main-private-discourse-${terraform.workspace}"
+    Name = "subnet-main-private-${count.index + 1}-discourse-${terraform.workspace}"
   }
 }
 
@@ -57,11 +77,13 @@ resource "aws_route_table" "rt_main_private" {
 }
 
 resource "aws_route_table_association" "rta_main_public" {
-  subnet_id = "${aws_subnet.subnet_main_public.id}"
+  count = 2
+  subnet_id = "${element(aws_subnet.subnet_main_public.*.id, count.index)}"
   route_table_id = "${aws_route_table.rt_main_public.id}"
 }
 
 resource "aws_route_table_association" "rta_main_private" {
-  subnet_id = "${aws_subnet.subnet_main_private.id}"
+  count = 2
+  subnet_id = "${element(aws_subnet.subnet_main_private.*.id, count.index)}"
   route_table_id = "${aws_route_table.rt_main_private.id}"
 }
