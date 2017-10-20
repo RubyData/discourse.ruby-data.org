@@ -97,3 +97,32 @@ resource "aws_security_group" "sg_postgres" {
     Name = "sg-postgres-discourse-${terraform.workspace}"
   }
 }
+
+resource "aws_security_group" "sg_redis" {
+  vpc_id = "${aws_vpc.vpc_main.id}"
+  name = "redis-discourse-${terraform.workspace}"
+  description = "Security group for redis servers"
+
+  ingress {
+    description = "Allow incoming trrafic from specific security groups"
+    from_port = 6379
+    to_port = 6379
+    protocol = "tcp"
+    security_groups = [
+      "${aws_security_group.sg_app.id}",
+      "${aws_security_group.sg_redis_accessible.id}",
+    ]
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Name = "sg-redis-discourse-${terraform.workspace}"
+  }
+}
