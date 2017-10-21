@@ -30,6 +30,13 @@ namespace :prepare do
     end
   end
 
+  task show_environment: :environment
+  task :show_environment do
+    ENV.keys.sort.each do |key|
+      puts "#{key} => #{ENV[key].inspect}"
+    end
+  end
+
   task :check do
     unless ENV['AWS_ACCESS_KEY_ID'] || ENV['SENDGRID_API_KEY']
       raise 'AWS_ACCESS_KEY_ID or SENDGRID_API_KEY is required'
