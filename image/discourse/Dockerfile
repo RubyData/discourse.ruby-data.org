@@ -33,3 +33,5 @@ RUN cd /tmp/discourse.ruby-data.org \
 	&& cd /pups \
 	&& echo "$input" | /pups/bin/pups --stdin \
 	&& rm -rf /tmp/discourse.ruby-data.org
+
+CMD ["/sbin/boot"]
