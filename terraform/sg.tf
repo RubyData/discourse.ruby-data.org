@@ -36,6 +36,14 @@ resource "aws_security_group" "sg_app" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "SSH from anywhere"
+    from_port = 9022
+    to_port = 9022
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     description = "Allow all outbound traffic"
     from_port = 0
