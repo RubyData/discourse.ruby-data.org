@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "rubydata/discourse:d7e8639d4ac7076d138991bd6be5cda21229b3da"
+    "Name": "rubydata/discourse:b73d67f7fe68363aac14f9349e0ee696104ab04c"
   },
   "Ports": [
     {
