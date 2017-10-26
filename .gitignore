@@ -7,3 +7,6 @@
 # Terraform
 .terraform
 terraform.tfstate.d
+
+# credentials
+/*-credentials.csv
