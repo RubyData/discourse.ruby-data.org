@@ -34,5 +34,5 @@ SSHD_CONFIG
 service ssh restart
 
 mkdir -p /usr/local/sbin
-curl -o /usr/local/sbin/mitamae https://github.com/itamae-kitchen/mitamae/releases/download/v$${mitamae_version}/mitamae-x86_64-linux
+curl -fsSL -o /usr/local/sbin/mitamae https://github.com/itamae-kitchen/mitamae/releases/download/v$${mitamae_version}/mitamae-x86_64-linux
 chmod 755 /usr/local/sbin/mitamae
