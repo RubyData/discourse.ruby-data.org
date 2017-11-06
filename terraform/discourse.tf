@@ -1,7 +1,7 @@
 variable "app_discourse_count" {
   type = "map"
   default = {
-    prod = 2
+    prod = 1
     test = 1
   }
 }
