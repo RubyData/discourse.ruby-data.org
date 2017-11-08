@@ -8,14 +8,14 @@ resource "aws_elb" "elb_app_discourse" {
   ]
 
   listener {
-    instance_port = 80
+    instance_port = 8880
     instance_protocol = "http"
     lb_port = 80
     lb_protocol = "http"
   }
 
   listener {
-    instance_port = 80
+    instance_port = 8880
     instance_protocol = "http"
     lb_port = 443
     lb_protocol = "https"
@@ -26,7 +26,7 @@ resource "aws_elb" "elb_app_discourse" {
     healthy_threshold = 2
     unhealthy_threshold = 2
     timeout = 10
-    target = "HTTP:80/"
+    target = "HTTP:8880/"
     interval = 30
   }
 
