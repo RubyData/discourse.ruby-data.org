@@ -32,11 +32,30 @@ resource "aws_instance" "app_discourse" {
 
   associate_public_ip_address = true
 
+  iam_instance_profile = "${aws_iam_instance_profile.app_discourse.id}"
+
   user_data = "${data.template_file.discourse_user_data.rendered}"
 
   tags {
     Name = "${format("app-discourse-${terraform.workspace}-%03d", count.index + 1)}"
   }
+}
+
+resource "aws_iam_instance_profile" "app_discourse" {
+  name = "app-discourse-${terraform.workspace}"
+  role = "${aws_iam_role.app_discourse.name}"
+}
+
+resource "aws_iam_role" "app_discourse" {
+  name = "app-discourse-${terraform.workspace}"
+  assume_role_policy = "${data.aws_iam_policy_document.instance_assume_role_policy.json}"
+}
+
+resource "aws_iam_role_policy" "app_discourse_kms" {
+  name = "app-discourse-${terraform.workspace}-kms-policy"
+  role = "${aws_iam_role.app_discourse.id}"
+
+  policy = "${data.aws_iam_policy_document.app_discourse_kms_policy.json}"
 }
 
 data "template_file" "discourse_user_data" {
@@ -54,4 +73,37 @@ data "template_file" "discourse_authorized_keys" {
 
 data "template_file" "sshd_config_content" {
   template = "${file("templates/sshd_config")}"
+}
+
+data "aws_iam_policy_document" "instance_assume_role_policy" {
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+data "aws_iam_policy_document" "app_discourse_kms_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt"
+    ]
+    resources = [
+      "arn:aws:kms:us-west-2:349507979381:key/9439f48a-810f-4597-b3c0-4121b6d3311c"
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:ListKeys",
+      "kms:CreateKey",
+      "kms:TagResource"
+    ]
+    resources = ["*"]
+  }
 }
